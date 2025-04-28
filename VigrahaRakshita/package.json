@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "chart.js": "^4.4.9",
+    "framer-motion": "^12.9.2",
     "leaflet": "^1.9.4",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
