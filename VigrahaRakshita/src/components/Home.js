@@ -10,7 +10,7 @@ const Home = () => {
       />
       <div className="relative z-10 max-w-4xl text-center px-4">
         <h1 className="text-5xl md:text-6xl font-extrabold mb-6 animate-fadeInDown">
-          VigrahaRakṣitā
+          VigrahaRakṣhitā
         </h1>
         <p className="text-xl md:text-2xl mb-8 animate-fadeInUp">
           भारत की आपदा सुरक्षा प्रहरी - Guardian of India during Disasters

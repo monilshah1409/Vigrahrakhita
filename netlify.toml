@@ -1,0 +1,4 @@
+[build]
+  base = "VigrahaRakshita"
+  command = "npm run build"
+  publish = "build"

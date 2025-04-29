@@ -1,17 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Line, Pie, Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  ArcElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { Line, Pie, Bar, Doughnut } from 'react-chartjs-2';
+import ChartJS from 'chart.js/auto';
 
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -28,40 +17,33 @@ L.Icon.Default.mergeOptions({
     'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  ArcElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+// Removed manual ChartJS.register calls as chart.js/auto handles registration
 
 const indiaZones = [
-  { id: 'gujarat', name: 'Gujarat', type: 'earthquake', color: 'red', lat: 21.1702, lng: 72.8311 },
-  { id: 'himachal', name: 'Himachal Pradesh', type: 'earthquake', color: 'red', lat: 31.1048, lng: 77.1734 },
-  { id: 'assam', name: 'Assam', type: 'flood', color: 'blue', lat: 26.2006, lng: 92.9376 },
-  { id: 'bihar', name: 'Bihar', type: 'flood', color: 'blue', lat: 25.0961, lng: 85.3131 },
-  { id: 'odisha', name: 'Odisha', type: 'cyclone', color: 'yellow', lat: 20.9517, lng: 85.0985 },
-  { id: 'andhra', name: 'Andhra Pradesh', type: 'cyclone', color: 'yellow', lat: 15.9129, lng: 79.7400 },
+  { id: 'uttarakhand', name: 'Uttarakhand', type: 'earthquake', color: 'red', lat: 30.0668, lng: 79.0193 },
+  { id: 'westbengal', name: 'West Bengal', type: 'flood', color: 'blue', lat: 22.9868, lng: 87.8550 },
+  { id: 'jharkhand', name: 'Jharkhand', type: 'flood', color: 'blue', lat: 23.6102, lng: 85.2799 },
+  { id: 'tamilnadu', name: 'Tamil Nadu', type: 'cyclone', color: 'yellow', lat: 11.1271, lng: 78.6569 },
+  { id: 'kerala', name: 'Kerala', type: 'cyclone', color: 'yellow', lat: 10.8505, lng: 76.2711 },
+  { id: 'pakistan_muzaffarabad', name: 'Muzaffarabad', type: 'flood', color: 'blue', lat: 34.3748, lng: 73.4722 },
+  { id: 'pakistan_rawalakot', name: 'Rawalakot', type: 'drought', color: 'orange', lat: 33.8581, lng: 73.7603 },
 ];
 
 const initialDisasterDetails = {
-  gujarat: 'Earthquake 5.2 Richter Scale detected near Ahmedabad.',
-  himachal: 'Earthquake 4.9 Richter Scale detected near Manali.',
-  assam: 'Flood warning in Dibrugarh – Brahmaputra rising 3cm/hr.',
-  bihar: 'Flood warning in Muzaffarpur – Ganges rising 4cm/hr.',
-  odisha: 'Cyclone alert upgraded for Odisha coast.',
-  andhra: 'Cyclone alert downgraded for Andhra Pradesh coast.',
+  uttarakhand: 'Earthquake 5.0 Richter Scale detected near Dehradun.',
+  westbengal: 'Flood warning in Kolkata – Hooghly river rising rapidly.',
+  jharkhand: 'Flood warning in Ranchi – Heavy rainfall expected.',
+  tamilnadu: 'Cyclone alert upgraded for Tamil Nadu coast.',
+  kerala: 'Cyclone alert downgraded for Kerala coast.',
+  pakistan_muzaffarabad: 'Flood warning in Muzaffarabad – River Jhelum rising rapidly.',
+  pakistan_rawalakot: 'Drought conditions worsening in Rawalakot area.',
 };
 
 const generateRandomData = () => ({
-  floods: Array.from({ length: 6 }, () => Math.floor(Math.random() * 8)),
-  earthquakes: Array.from({ length: 6 }, () => Math.floor(Math.random() * 4)),
-  cyclones: Array.from({ length: 6 }, () => Math.floor(Math.random() * 3)),
+  floods: Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)),
+  earthquakes: Array.from({ length: 6 }, () => Math.floor(Math.random() * 5)),
+  cyclones: Array.from({ length: 6 }, () => Math.floor(Math.random() * 4)),
+  droughts: Array.from({ length: 6 }, () => Math.floor(Math.random() * 3)),
 });
 
 const DisasterLegend = () => {
@@ -75,8 +57,11 @@ const DisasterLegend = () => {
         <li className="flex items-center gap-2 mb-1">
           <span className="w-4 h-4 bg-blue-700 rounded-full inline-block"></span> Flood
         </li>
-        <li className="flex items-center gap-2">
+        <li className="flex items-center gap-2 mb-1">
           <span className="w-4 h-4 bg-yellow-600 rounded-full inline-block"></span> Cyclone
+        </li>
+        <li className="flex items-center gap-2">
+          <span className="w-4 h-4 bg-orange-600 rounded-full inline-block"></span> Drought
         </li>
       </ul>
     </div>
@@ -89,21 +74,13 @@ import { DisasterContext } from '../context/DisasterContext';
 
 const Dashboard = () => {
   const context = useContext(DisasterContext);
-  const cityData = context?.cityData || {};
+  const cityData = context?.cityData || {
+    // Default city data structure
+    uttarakhand: { resources: { food: 500, medical: 300, shelter: 200 } },
+    westbengal: { resources: { food: 700, medical: 400, shelter: 300 } },
+    // ... add other cities with default values
+  };
   
-  // Resource data matching ResourceManagement.js
-  const [resources] = useState([
-    { id: 1, name: 'Food Packets', quantity: 1500, category: 'Food', status: 'In Stock', priority: 'High' },
-    { id: 2, name: 'Medical Kits', quantity: 300, category: 'Medical', status: 'Low Stock', priority: 'Urgent' },
-    { id: 3, name: 'Tents', quantity: 200, category: 'Shelter', status: 'In Stock', priority: 'Medium' },
-  ]);
-
-  const [allocations] = useState([
-    { calamity: 'Flood Relief', resource: 'Boats', allocated: 50 },
-    { calamity: 'Earthquake Zone', resource: 'Tents', allocated: 120 },
-    { calamity: 'Cyclone Area', resource: 'Food', allocated: 800 },
-  ]);
-
   // Calculate total resources from cityData
   const totalResources = useMemo(() => {
     return Object.values(cityData).reduce((sum, city) => {
@@ -114,13 +91,42 @@ const Dashboard = () => {
     }, 0);
   }, [cityData]);
 
-  // Single metrics state declaration
+  // Update metrics to use calculated totalResources
   const [metrics] = useState({
-    activeDisasters: 3,
-    affectedPeople: 15000,
+    activeDisasters: 7,
+    affectedPeople: 25000,
     deployedResources: totalResources,
-    activeVolunteers: 1200
+    activeVolunteers: 2500
   });
+
+  // Updated resource data with more variety and quantities
+  const [resources] = useState([
+    { id: 1, name: 'Food Packets', quantity: 2000, category: 'Food', status: 'In Stock', priority: 'High' },
+    { id: 2, name: 'Medical Kits', quantity: 500, category: 'Medical', status: 'In Stock', priority: 'High' },
+    { id: 3, name: 'Tents', quantity: 350, category: 'Shelter', status: 'Low Stock', priority: 'Urgent' },
+    { id: 4, name: 'Water Bottles', quantity: 1000, category: 'Food', status: 'In Stock', priority: 'Medium' },
+  ]);
+
+  // Resource chart data for Doughnut chart
+  const resourceChartData = {
+    labels: ['Food', 'Medical', 'Shelter', 'Water'],
+    datasets: [{
+      data: [
+        resources.filter(r => r.category === 'Food').reduce((sum, r) => sum + r.quantity, 0),
+        resources.find(r => r.category === 'Medical')?.quantity || 0,
+        resources.find(r => r.category === 'Shelter')?.quantity || 0,
+        resources.find(r => r.name === 'Water Bottles')?.quantity || 0,
+      ],
+      backgroundColor: ['#4ADE80', '#60A5FA', '#FBBF24', '#3B82F6']
+    }]
+  };
+
+  const [allocations] = useState([
+    { calamity: 'Flood Relief', resource: 'Boats', allocated: 70 },
+    { calamity: 'Earthquake Zone', resource: 'Tents', allocated: 150 },
+    { calamity: 'Cyclone Area', resource: 'Food', allocated: 900 },
+    { calamity: 'Heatwave Area', resource: 'Water Bottles', allocated: 400 },
+  ]);
 
 
 
@@ -131,27 +137,34 @@ const Dashboard = () => {
     earthquake: true,
     flood: true,
     cyclone: true,
+    drought: true,
   });
   const [lineData, setLineData] = useState({
-    labels: ['July', 'August', 'September', 'October', 'November', 'December'],
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
     datasets: [
       {
         label: 'Floods',
-        data: [3, 4, 5, 6, 4, 3],
+        data: [4, 5, 6, 7, 5, 4],
         borderColor: 'blue',
         backgroundColor: 'rgba(0,0,255,0.3)',
       },
       {
         label: 'Earthquakes',
-        data: [2, 2, 3, 3, 2, 2],
+        data: [3, 3, 4, 4, 3, 3],
         borderColor: 'red',
         backgroundColor: 'rgba(255,0,0,0.3)',
       },
       {
         label: 'Cyclones',
-        data: [1, 2, 2, 2, 1, 1],
+        data: [2, 3, 3, 3, 2, 2],
         borderColor: 'yellow',
         backgroundColor: 'rgba(255,255,0,0.3)',
+      },
+      {
+        label: 'Droughts',
+        data: [1, 1, 2, 2, 1, 1],
+        borderColor: 'orange',
+        backgroundColor: 'rgba(255,165,0,0.3)',
       },
     ],
   });
@@ -162,10 +175,10 @@ const Dashboard = () => {
       {
         label: 'Resource Allocation',
         data: [
-          totalResources * 0.35, // Food
-          totalResources * 0.25, // Medical
-          totalResources * 0.20, // Shelter
-          totalResources * 0.20  // Transport
+          totalResources * 0.30, // Food
+          totalResources * 0.30, // Medical
+          totalResources * 0.25, // Shelter
+          totalResources * 0.15  // Transport
         ],
         backgroundColor: ['#4ADE80', '#60A5FA', '#FBBF24', '#F87171']
       }
@@ -179,10 +192,10 @@ const Dashboard = () => {
         label: 'Volunteer Distribution',
         data: indiaZones.map(zone => {
           // Calculate volunteers based on zone type and severity
-          const baseVolunteers = zone.type === 'earthquake' ? 150 :
-                                zone.type === 'flood' ? 200 : 100;
+          const baseVolunteers = zone.type === 'earthquake' ? 180 :
+                                zone.type === 'flood' ? 220 : 130;
           // Add some variation based on zone ID
-          return baseVolunteers + (zone.id.charCodeAt(0) % 50);
+          return baseVolunteers + (zone.id.charCodeAt(0) % 40);
         }),
         backgroundColor: indiaZones.map(zone => {
           // Use zone-specific colors
@@ -210,6 +223,7 @@ const Dashboard = () => {
         { ...prev.datasets[0], data: newData.floods },
         { ...prev.datasets[1], data: newData.earthquakes },
         { ...prev.datasets[2], data: newData.cyclones },
+        { ...prev.datasets[3], data: newData.droughts },
       ],
     }));
   };
@@ -217,13 +231,11 @@ const Dashboard = () => {
   const totalVolunteers = useMemo(() => barChartData.datasets[0].data.reduce((a, b) => a + b, 0), [barChartData]);
   const totalDisasters = useMemo(() => lineData.datasets.reduce((sum, ds) => sum + ds.data.reduce((a, b) => a + b, 0), 0), [lineData]);
 
-  // Remove the duplicate metrics declaration below
- 
   // Stable resource allocation data
   const resourceAllocation = {
     labels: ['Food', 'Medical', 'Shelter', 'Transport'],
     datasets: [{
-      data: [35, 25, 20, 20],
+      data: [30, 30, 25, 15],
       backgroundColor: ['#4ADE80', '#60A5FA', '#FBBF24', '#F87171']
     }]
   };
@@ -234,21 +246,27 @@ const Dashboard = () => {
     datasets: [
       {
         label: 'Earthquakes',
-        data: [2, 1, 3, 2, 1, 4].map(val => val * (totalResources / 1000)),
+        data: [3, 2, 4, 3, 2, 5].map(val => val * (totalResources / 1000)),
         borderColor: '#EF4444',
         backgroundColor: 'rgba(239, 68, 68, 0.2)'
       },
       {
         label: 'Floods',
-        data: [3, 2, 4, 5, 3, 6].map(val => val * (totalResources / 1000)),
+        data: [4, 3, 5, 6, 4, 7].map(val => val * (totalResources / 1000)),
         borderColor: '#3B82F6',
         backgroundColor: 'rgba(59, 130, 246, 0.2)'
       },
       {
         label: 'Cyclones',
-        data: [1, 1, 2, 3, 2, 4].map(val => val * (totalResources / 1000)),
+        data: [2, 2, 3, 4, 3, 3].map(val => val * (totalResources / 1000)),
         borderColor: '#F59E0B',
         backgroundColor: 'rgba(245, 158, 11, 0.2)'
+      },
+      {
+        label: 'Droughts',
+        data: [1, 1, 2, 2, 1, 1].map(val => val * (totalResources / 1000)),
+        borderColor: '#FFA500',
+        backgroundColor: 'rgba(255, 165, 0, 0.2)'
       }
     ]
   };
@@ -268,9 +286,11 @@ const Dashboard = () => {
 
   // Add response time tracking
   const [responseTimes] = useState([
-    { region: 'Gujarat', type: 'Earthquake', responseTime: '2h 15m' },
-    { region: 'Assam', type: 'Flood', responseTime: '3h 45m' },
-    { region: 'Odisha', type: 'Cyclone', responseTime: '1h 50m' }
+    { region: 'Uttarakhand', type: 'Earthquake', responseTime: '2h 10m' },
+    { region: 'West Bengal', type: 'Flood', responseTime: '3h 30m' },
+    { region: 'Tamil Nadu', type: 'Cyclone', responseTime: '1h 45m' },
+    { region: 'Muzaffarabad', type: 'Flood', responseTime: '2h 50m' },
+    { region: 'Rawalakot', type: 'Drought', responseTime: '3h 10m' },
   ]);
 
   // Add resource consumption data
@@ -278,7 +298,7 @@ const Dashboard = () => {
     labels: ['Food', 'Medical', 'Shelter', 'Transport'],
     datasets: [{
       label: 'Resource Consumption',
-      data: [totalResources * 0.4, totalResources * 0.3, totalResources * 0.2, totalResources * 0.1],
+      data: [totalResources * 0.35, totalResources * 0.25, totalResources * 0.25, totalResources * 0.15],
       backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
     }]
   };
@@ -289,13 +309,13 @@ const Dashboard = () => {
     datasets: [
       {
         label: 'Volunteers',
-        data: [120, 150, 200, 180, 220, 250],
+        data: [130, 160, 210, 190, 230, 270],
         borderColor: '#3B82F6',
         backgroundColor: 'rgba(59, 130, 246, 0.2)'
       },
       {
         label: 'NGOs',
-        data: [15, 18, 20, 22, 25, 30],
+        data: [18, 20, 22, 24, 27, 32],
         borderColor: '#10B981',
         backgroundColor: 'rgba(16, 185, 129, 0.2)'
       }
@@ -316,19 +336,19 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <p className="text-sm text-gray-500">Active Disasters</p>
-            <p className="text-2xl font-bold text-gray-900">6</p>
+            <p className="text-2xl font-bold text-gray-900">{metrics.activeDisasters}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <p className="text-sm text-gray-500">Affected People</p>
-            <p className="text-2xl font-bold text-gray-900">1,000</p>
+            <p className="text-2xl font-bold text-gray-900">{metrics.affectedPeople.toLocaleString()}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <p className="text-sm text-gray-500">Deployed Resources</p>
-            <p className="text-2xl font-bold text-gray-900">{totalResources}</p>
+            <p className="text-2xl font-bold text-gray-900">{metrics.deployedResources.toLocaleString()}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <p className="text-sm text-gray-500">Active Volunteers</p>
-            <p className="text-2xl font-bold text-gray-900">120</p>
+            <p className="text-2xl font-bold text-gray-900">{metrics.activeVolunteers}</p>
           </div>
         </div>
 
@@ -388,8 +408,8 @@ const Dashboard = () => {
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <h2 className="text-xl font-semibold mb-4 text-gray-900">Resource Allocation</h2>
             <div className="h-64">
-              <Pie
-                data={pieChartData}
+              <Doughnut
+                data={resourceChartData}
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,

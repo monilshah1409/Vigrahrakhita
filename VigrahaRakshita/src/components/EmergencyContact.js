@@ -16,9 +16,9 @@ const emergencyContacts = [
   },
   {
     name: "Ambulance",
-    number: "102",
+    number: "108",
     icon: <FaAmbulance className="text-green-600" />,
-    description: "For medical emergencies"
+    description: "For disaster response and rescue"
   },
   {
     name: "Fire",
@@ -26,12 +26,12 @@ const emergencyContacts = [
     icon: <FaFireExtinguisher className="text-red-600" />,
     description: "For fire emergencies"
   },
-  {
-    name: "Disaster Management",
-    number: "108",
-    icon: <FaHospital className="text-yellow-600" />,
-    description: "For disaster response and rescue"
-  },
+  // {
+  //   name: "Disaster Management",
+  //   number: "108",
+  //   icon: <FaHospital className="text-yellow-600" />,
+  //   description: "For disaster response and rescue"
+  // },
   {
     name: "Women's Helpline",
     number: "1091",
@@ -52,7 +52,7 @@ const emergencyContacts = [
   },
   {
     name: "VigrahaRakṣitā Team",
-    number: "+919913140919",
+    // number: "+919913140919",
     icon: <FaUserShield className="text-teal-600" />,
     description: "Direct contact for disaster support"
   }

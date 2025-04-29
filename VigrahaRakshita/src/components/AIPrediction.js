@@ -14,12 +14,14 @@ import {
 import { DisasterContext } from '../context/DisasterContext';
 
 const cityRisks = {
-  Chennai: '70% risk of cyclone next 3 months (Sample Prediction)',
-  Patna: '55% risk of flood (Sample Prediction)',
-  Bhuj: '40% risk of earthquake (Sample Prediction)',
-  Mumbai: '65% risk of heavy rainfall next 3 months (Sample Prediction)',
-  Delhi: '50% risk of heatwave next 3 months (Sample Prediction)',
-  Kolkata: '45% risk of flood next 3 months (Sample Prediction)',
+  Chennai: '70% risk of cyclone next 3 days',
+  Patna: '55% risk of flood',
+  Bhuj: '40% risk of earthquake',
+  Mumbai: '65% risk of heavy rainfall next 3 days',
+  Delhi: '50% risk of heatwave next 3 days',
+  Kolkata: '45% risk of flood next 3 days',
+  Bangalore: '60% risk of drought next 3 days',
+  Hyderabad: '50% risk of heatwave next 3 days',
 };
 
 const riskTrends = {
@@ -29,15 +31,19 @@ const riskTrends = {
   Mumbai: [55, 58, 60, 62, 64, 65],
   Delhi: [45, 47, 48, 49, 50, 50],
   Kolkata: [40, 42, 43, 44, 44, 45],
+  Bangalore: [50, 55, 58, 60, 62, 60],
+  Hyderabad: [45, 48, 50, 52, 53, 50],
 };
 
 const recentPredictions = [
-  { city: 'Chennai', type: 'Cyclone', risk: '70%', date: '2024-06-01' },
-  { city: 'Patna', type: 'Flood', risk: '55%', date: '2024-05-28' },
-  { city: 'Bhuj', type: 'Earthquake', risk: '40%', date: '2024-05-25' },
-  { city: 'Mumbai', type: 'Heavy Rainfall', risk: '65%', date: '2024-06-02' },
-  { city: 'Delhi', type: 'Heatwave', risk: '50%', date: '2024-06-01' },
-  { city: 'Kolkata', type: 'Flood', risk: '45%', date: '2024-05-30' },
+  { city: 'Chennai', type: 'Cyclone', risk: '70%', date: '2025-04-29' },
+  { city: 'Patna', type: 'Flood', risk: '55%', date: '2025-04-29' },
+  { city: 'Bhuj', type: 'Earthquake', risk: '40%', date: '2025-04-29' },
+  { city: 'Mumbai', type: 'Heavy Rainfall', risk: '65%', date: '2025-04-29' },
+  { city: 'Delhi', type: 'Heatwave', risk: '50%', date: '2025-04-29' },
+  { city: 'Kolkata', type: 'Flood', risk: '45%', date: '2025-04-29' },
+  { city: 'Bangalore', type: 'Drought', risk: '60%', date: '2025-04-29' },
+  { city: 'Hyderabad', type: 'Heatwave', risk: '50%', date: '2025-04-29' },
 ];
 
 const safetyTips = {
@@ -66,6 +72,11 @@ const safetyTips = {
     'Wear light and loose clothing.',
     'Check on vulnerable people regularly.',
   ],
+  Drought: [
+    'Conserve water and avoid wastage.',
+    'Use water-efficient appliances.',
+    'Stay informed about water supply updates.',
+  ],
 };
 
 const AIPrediction = () => {
@@ -90,6 +101,8 @@ const AIPrediction = () => {
     else if (city === 'Mumbai') setTips(safetyTips['Heavy Rainfall']);
     else if (city === 'Delhi') setTips(safetyTips.Heatwave);
     else if (city === 'Kolkata') setTips(safetyTips.Flood);
+    else if (city === 'Bangalore') setTips(safetyTips.Drought);
+    else if (city === 'Hyderabad') setTips(safetyTips.Heatwave);
     else setTips([]);
   };
 
@@ -160,7 +173,16 @@ const AIPrediction = () => {
             </thead>
             <tbody>
               {recentPredictions.map((pred, idx) => (
-                <tr key={idx} className="hover:bg-blue-50">
+                <tr 
+                  key={idx} 
+                  className="hover:bg-blue-50 cursor-pointer"
+                  onClick={() => {
+                    setSelectedCity(pred.city);
+                    setRisk(cityRisks[pred.city] || '');
+                    setTrend(riskTrends[pred.city] || []);
+                    setTips(safetyTips[pred.type] || []);
+                  }}
+                >
                   <td className="py-2 px-4 border-b">{pred.city}</td>
                   <td className="py-2 px-4 border-b">{pred.type}</td>
                   <td className="py-2 px-4 border-b">{pred.risk}</td>
