@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   return (
@@ -16,20 +17,20 @@ const Home = () => {
           भारत की आपदा सुरक्षा प्रहरी - Guardian of India during Disasters
         </p>
         <div className="flex flex-wrap justify-center gap-6 animate-fadeInUp delay-200">
-          <a
-            href="/dashboard"
+          <Link
+            to="/dashboard"
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded shadow-lg transition"
           >
             View Dashboard
-          </a>
-          <a
-            href="/volunteer"
+          </Link>
+          <Link
+            to="/volunteer"
             className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded shadow-lg transition"
           >
             Volunteer Now
-          </a>
+          </Link>
           <a
-            href= "https://drive.google.com/uc?export=download&id=1eeLSoKq_fTuR3mcVYC-RbON7PVUiuxC-" 
+            href="https://drive.google.com/uc?export=download&id=1eeLSoKq_fTuR3mcVYC-RbON7PVUiuxC-"
             download="SafetyGuide.pdf"
             className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-8 rounded shadow-lg transition"
           >
