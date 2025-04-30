@@ -1,5 +1,5 @@
 import React from "react";
-import { FaPhoneAlt, FaAmbulance, FaFireExtinguisher, FaHospital, FaUserShield, FaEye } from "react-icons/fa";
+import { FaPhoneAlt, FaAmbulance, FaFireExtinguisher, FaHospital, FaUserShield, FaEye, FaShieldAlt, FaFemale, FaChild, FaWalking, FaUsers } from "react-icons/fa";
 
 const emergencyContacts = [
   {
@@ -11,7 +11,7 @@ const emergencyContacts = [
   {
     name: "Police",
     number: "100",
-    icon: <FaUserShield className="text-indigo-600" />,
+    icon: <FaShieldAlt className="text-indigo-600" />,
     description: "For law enforcement emergencies"
   },
   {
@@ -35,25 +35,25 @@ const emergencyContacts = [
   {
     name: "Women's Helpline",
     number: "1091",
-    icon: <FaUserShield className="text-pink-600" />,
+    icon: <FaFemale className="text-pink-600" />,
     description: "For women in distress"
   },
   {
     name: "Child Helpline",
     number: "1098",
-    icon: <FaUserShield className="text-purple-600" />,
+    icon: <FaChild className="text-purple-600" />,
     description: "For child protection services"
   },
   {
     name: "Senior Citizen Helpline",
     number: "14567",
-    icon: <FaUserShield className="text-orange-600" />,
+    icon: <FaWalking className="text-orange-600" />,
     description: "For senior citizen assistance"
   },
   {
     name: "VigrahaRakṣitā Team",
     // number: "+919913140919",
-    icon: <FaUserShield className="text-teal-600" />,
+    icon: <FaUsers className="text-teal-600" />,
     description: "Direct contact for disaster support"
   }
 ];
@@ -73,7 +73,7 @@ const EmergencyContact = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {emergencyContacts.map((contact, idx) => (
             <div key={idx} className="flex items-center bg-blue-50 rounded-xl p-4 shadow hover:shadow-lg transition">
-              <div className="text-3xl mr-4">{contact.icon}</div>
+              <div className="text-3xl mr-4 p-3 rounded-full" style={{backgroundColor: contact.icon.props.className.includes('text-blue') ? '#DBEAFE' : contact.icon.props.className.includes('text-indigo') ? '#E0E7FF' : contact.icon.props.className.includes('text-green') ? '#D1FAE5' : contact.icon.props.className.includes('text-red') ? '#FEE2E2' : contact.icon.props.className.includes('text-pink') ? '#FCE7F3' : contact.icon.props.className.includes('text-purple') ? '#EDE9FE' : contact.icon.props.className.includes('text-orange') ? '#FFEDD5' : '#CCFBF1'}}>{contact.icon}</div>
               <div className="flex-grow">
                 <div className="text-lg font-semibold text-blue-900">{contact.name}</div>
                 <div className="text-2xl font-bold text-blue-700">{contact.number}</div>
@@ -84,7 +84,7 @@ const EmergencyContact = () => {
                 className="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-100 transition"
                 aria-label={`Call ${contact.name}`}
               >
-                <FaEye className="text-xl" />
+                <FaPhoneAlt className="text-xl" />
               </button>
             </div>
           ))}

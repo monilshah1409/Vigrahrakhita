@@ -67,7 +67,7 @@ const ResourceManagement = () => {
             Resource Distribution
             <span className="ml-2 text-sm text-blue-500">(Live Updates)</span>
           </h3>
-          <div className="h-64">
+          <div className="h-64 flex items-center justify-center">
             <Doughnut 
               data={chartData}
               options={{ 

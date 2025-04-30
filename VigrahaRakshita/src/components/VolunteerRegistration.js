@@ -75,9 +75,30 @@ const VolunteerRegistration = () => {
 
   if (submitted) {
     return (
-      <div className="p-6 bg-white rounded shadow max-w-4xl mx-auto text-center transition-opacity duration-700 ease-in-out opacity-100">
-        <h2 className="text-3xl font-extrabold mb-6 text-green-700">🎉 Thank You for Registering!</h2>
-        <p className="text-lg text-gray-700">We appreciate your willingness to volunteer. We will contact you soon.</p>
+      <div className="fixed inset-0 bg-green-50 transition-all duration-1000 ease-in-out flex items-center justify-center">
+        <div className="p-6 rounded shadow max-w-4xl mx-auto text-center">
+          <div className="animate-bounce mb-8">
+            <svg className="mx-auto h-24 w-24 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 className="text-3xl font-extrabold mb-6 text-green-700">🎉 Application Submitted!</h2>
+          <p className="text-lg text-gray-700 mb-8">We appreciate your willingness to volunteer. We will contact you soon.</p>
+          <div className="w-full bg-green-50 p-4 rounded-lg">
+            <div className="h-2 bg-green-200 rounded-full">
+              <div className="h-2 bg-green-500 rounded-full w-0 animate-progress"></div>
+            </div>
+            <p className="mt-2 text-sm text-green-700">Processing your application...</p>
+          </div>
+          <div className="mt-8">
+            <button 
+              onClick={() => setSubmitted(false)}
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all"
+            >
+              Submit Another Response
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -101,7 +122,6 @@ const VolunteerRegistration = () => {
           />
           {errors.name && <p className="text-red-600 mt-1 text-sm">{errors.name}</p>}
         </div>
-
         <div>
           <label className="block mb-2 font-semibold text-gray-800" htmlFor="phone">Phone Number</label>
           <input
@@ -115,7 +135,6 @@ const VolunteerRegistration = () => {
           />
           {errors.phone && <p className="text-red-600 mt-1 text-sm">{errors.phone}</p>}
         </div>
-
         <div>
           <label className="block mb-2 font-semibold text-gray-800" htmlFor="email">Email</label>
           <input
@@ -129,7 +148,6 @@ const VolunteerRegistration = () => {
           />
           {errors.email && <p className="text-red-600 mt-1 text-sm">{errors.email}</p>}
         </div>
-
         <div>
           <label className="block mb-2 font-semibold text-gray-800" htmlFor="address">Address</label>
           <textarea
@@ -143,7 +161,6 @@ const VolunteerRegistration = () => {
           />
           {errors.address && <p className="text-red-600 mt-1 text-sm">{errors.address}</p>}
         </div>
-
         <div>
           <label className="block mb-2 font-semibold text-gray-800" htmlFor="skill">Skill</label>
           <select
@@ -160,7 +177,6 @@ const VolunteerRegistration = () => {
           </select>
           {errors.skill && <p className="text-red-600 mt-1 text-sm">{errors.skill}</p>}
         </div>
-
         <div>
           <label className="block mb-2 font-semibold text-gray-800" htmlFor="state">State</label>
           <select
@@ -177,7 +193,6 @@ const VolunteerRegistration = () => {
           </select>
           {errors.state && <p className="text-red-600 mt-1 text-sm">{errors.state}</p>}
         </div>
-
         <button
           type="submit"
           className="w-full bg-green-700 hover:bg-green-800 text-white font-semibold py-3 px-6 rounded transition-colors"
