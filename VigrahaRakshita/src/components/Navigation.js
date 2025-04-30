@@ -20,8 +20,8 @@ const Navigation = () => {
         <Link to="/" className="text-white text-xl font-bold hover:text-blue-200 transition-colors duration-200">
           VigrahaRakshita
         </Link>
-        {/* Mobile menu button */}
-        <div className="md:hidden">
+        {/* Mobile menu button - always visible on mobile */}
+        <div className="flex md:hidden">
           <button 
             onClick={toggleMenu}
             className="text-white focus:outline-none"
@@ -30,7 +30,7 @@ const Navigation = () => {
           </button>
         </div>
         
-        {/* Desktop menu */}
+        {/* Desktop menu - only visible on md and up */}
         <ul className="hidden md:flex space-x-6">
           <li>
             <Link to="/" className="text-white hover:text-blue-200">
@@ -57,16 +57,14 @@ const Navigation = () => {
               Emergency Contacts
             </Link>
           </li>
-          
           <li>
             <Link to="/volunteer" className="text-white hover:text-blue-200">
               Volunteer
             </Link>
           </li>
-          
         </ul>
         
-        {/* Mobile menu */}
+        {/* Mobile menu - always visible on mobile when open */}
         <div className={`md:hidden fixed top-16 left-0 w-full bg-blue-800 shadow-lg transition-all duration-300 ease-in-out z-50 ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'}`}>
           <ul className="flex flex-col space-y-6 p-6">
             <li>
