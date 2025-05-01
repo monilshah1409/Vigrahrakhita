@@ -52,7 +52,7 @@ const emergencyContacts = [
   },
   {
     name: "VigrahaRakṣitā Team",
-    number: "+919913140919",
+    number: "9913140919",
     icon: <FaUsers className="text-teal-600" />,
     description: "Direct contact for disaster support"
   }
